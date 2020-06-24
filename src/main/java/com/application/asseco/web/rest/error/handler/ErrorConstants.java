@@ -5,6 +5,8 @@ import java.net.URI;
 public final class ErrorConstants {
 
     public static final String ERR_CONCURRENCY_FAILURE = "error.concurrencyFailure";
+    public static final String ERR_USER_NOT_FOUND = "error.user.not.found";
+    public static final String ERR_ENTITY_CREATION = "error.entity.creation";
     public static final String PROBLEM_BASE_URL = "";
     public static final URI DEFAULT_TYPE = URI.create(PROBLEM_BASE_URL + "");
 

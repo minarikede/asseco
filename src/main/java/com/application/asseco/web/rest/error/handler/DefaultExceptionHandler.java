@@ -1,5 +1,7 @@
 package com.application.asseco.web.rest.error.handler;
 
+import com.application.asseco.web.rest.error.EntityCreationException;
+import com.application.asseco.web.rest.error.UserNotFoundException;
 import org.springframework.dao.ConcurrencyFailureException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -18,13 +20,22 @@ import javax.annotation.Nonnull;
  */
 @ControllerAdvice
 public class DefaultExceptionHandler extends AbstractExceptionHandler {
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<Problem> handleUserNotFoundException(UserNotFoundException ex,
+                                                               NativeWebRequest request) {
 
+        final Problem problem = build(ErrorConstants.DEFAULT_TYPE, Status.NOT_FOUND,
+                ErrorConstants.ERR_USER_NOT_FOUND);
 
-    @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<Problem> handleMethodArgumentNotValid(RuntimeException ex,
-                                                                @Nonnull NativeWebRequest request) {
-        final Problem problem = build(ErrorConstants.DEFAULT_TYPE, Status.INTERNAL_SERVER_ERROR,
-                ErrorConstants.ERR_INTERNAL_SERVER_ERROR);
+        return create(ex, problem, request);
+    }
+
+    @ExceptionHandler(EntityCreationException.class)
+    public ResponseEntity<Problem> handleEntityCreationException(EntityCreationException ex,
+                                                               NativeWebRequest request) {
+
+        final Problem problem = build(ErrorConstants.DEFAULT_TYPE, Status.BAD_REQUEST,
+                ErrorConstants.ERR_ENTITY_CREATION);
 
         return create(ex, problem, request);
     }
@@ -44,6 +55,15 @@ public class DefaultExceptionHandler extends AbstractExceptionHandler {
                                                                NativeWebRequest request) {
 
         final Problem problem = build(ErrorConstants.DEFAULT_TYPE, Status.FORBIDDEN, ex.getMessage());
+        return create(ex, problem, request);
+    }
+
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<Problem> handleMethodArgumentNotValid(RuntimeException ex,
+                                                                @Nonnull NativeWebRequest request) {
+        final Problem problem = build(ErrorConstants.DEFAULT_TYPE, Status.INTERNAL_SERVER_ERROR,
+                ErrorConstants.ERR_INTERNAL_SERVER_ERROR);
+
         return create(ex, problem, request);
     }
 
